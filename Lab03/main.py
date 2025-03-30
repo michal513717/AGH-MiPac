@@ -19,6 +19,7 @@ def display_first_frame(cap):
         plt.imshow(frame_rgb)
         plt.title("First Frame")
         plt.axis("off")
+        plt.savefig("first_frame.png")
         plt.show()
     else:
         raise Exception("Error: Could not read the first frame.")
