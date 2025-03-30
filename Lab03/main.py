@@ -1,5 +1,5 @@
 import matplotlib
-matplotlib.use("Agg")  # Ustaw backend na nieinteraktywny
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import os
 import cv2
