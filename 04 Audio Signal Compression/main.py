@@ -1,8 +1,13 @@
-import numpy as np
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+
+import numpy as np
 from scipy.io import wavfile
 from IPython.display import Audio, display
 import os
+
+
 
 # === 1. Load audio file ===
 def load_audio(filename):
@@ -11,6 +16,9 @@ def load_audio(filename):
 
 # === 2. Plot waveform ===
 def plot_waveform(data, rate, title="Waveform"):
+    if len(data.shape) > 1:
+        data = data[:, 0]  # use only one channel
+    
     time = np.linspace(0, len(data) / rate, num=len(data))
     plt.figure(figsize=(12, 4))
     plt.plot(time, data)
@@ -19,7 +27,9 @@ def plot_waveform(data, rate, title="Waveform"):
     plt.ylabel('Amplitude')
     plt.grid()
     plt.tight_layout()
-    plt.show()
+    plt.savefig("examples/waveform.png")  # Save to file instead of showing
+    plt.close()
+
 
 # === 3. Display audio properties ===
 def display_audio_info(data, rate):
@@ -30,6 +40,17 @@ def display_audio_info(data, rate):
 
 # === 4. Play audio ===
 def play_audio(data, rate):
+    # If stereo, take only one channel
+    if len(data.shape) > 1:
+        data = data[:, 0]
+    
+    # Normalize to int16 if not already
+    if data.dtype != np.int16:
+        max_val = np.max(np.abs(data))
+        if max_val == 0:
+            max_val = 1  # avoid division by zero
+        data = (data / max_val * 32767).astype(np.int16)
+    
     return Audio(data, rate=rate)
 
 # === 5. Extract a segment from the audio ===
@@ -48,9 +69,22 @@ def downsample_audio(data, original_rate, factor, output_file):
 
 # === 6b. Compress audio by reducing bit depth to 8-bit ===
 def convert_to_8bit(data, rate, output_file):
-    normalized = ((data / np.max(np.abs(data))) * 127).astype(np.int8)
-    wavfile.write(output_file, rate, normalized)
-    return normalized
+    # Use only one channel if stereo
+    if len(data.shape) > 1:
+        data = data[:, 0]
+
+    # Normalize to [-1.0, 1.0]
+    data_norm = data / np.max(np.abs(data))
+
+    # Quantize to 256 levels (simulate 8-bit)
+    data_8bit = np.round(data_norm * 127) / 127
+
+    # Rescale back to int16 to be writable
+    data_int16 = (data_8bit * 32767).astype(np.int16)
+
+    wavfile.write(output_file, rate, data_int16)
+    return data_int16
+
 
 # === 7. Compare file sizes ===
 def compare_file_sizes(*filenames):
