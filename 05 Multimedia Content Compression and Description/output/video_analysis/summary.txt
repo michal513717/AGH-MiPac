@@ -1,0 +1,6 @@
+Analyzed video: video.mp4
+Time segment: 10-20 seconds
+Frames extracted: 10
+Average difference: 67.7227%
+Average PSNR: 19.24 dB
+Average SSIM: 0.8493

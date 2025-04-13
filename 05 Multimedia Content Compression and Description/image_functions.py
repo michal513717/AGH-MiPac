@@ -61,8 +61,8 @@ def print_comparison_results(results):
             print(f"{status}: {original_path} vs {comp['converted_path']}")
 
 def main():
-    input_image_paths = ["5.3.1.jpg", "5.3.2.jpg", "5.3.3.jpg"]
-    output_folder = "output"
+    input_image_paths = ["examples/images_formats/5.3.1.jpg", "examples/images_formats/5.3.2.jpg", "examples/images_formats/5.3.3.jpg"]
+    output_folder = "output/images_formats"
     formats = ['JPEG', 'TIFF', 'PNG', 'BMP']
     
     results = compare_all_conversions(input_image_paths, output_folder, formats)
